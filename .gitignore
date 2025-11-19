@@ -1,0 +1,11 @@
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+crash.log
+
+node_modules/
+.env
+
+*.log
+EOF
