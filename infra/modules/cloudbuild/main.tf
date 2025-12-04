@@ -7,21 +7,9 @@ resource "google_cloudbuild_trigger" "trigger" {
     name = var.repo_name
 
     push{
-        branch = "^${var.branch}$"
+        branch = var.branch
     }
   }
-  build {
-    step {
-      name = "gcr.io/cloud-builders/docker" # Corrected typo from 'dockerl' to 'docker'
-      args = ["build", "-t", var.image, "./services/upload-service"]
-    }
-
-    step {
-      name = "gcr.io/cloud-builders/docker"
-      args = ["push", var.image]
-    }
-
-    images = [var.image]
-  }
+   filename = "cloudbuild.yaml"
 
 }
