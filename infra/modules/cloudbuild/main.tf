@@ -7,7 +7,7 @@ resource "google_cloudbuild_trigger" "trigger" {
     name = var.repo_name
 
     push{
-        branch = "^${var.branch}$"
+        branch = "${var.branch}"
     }
   }
    filename = "services/${var.service_name}/cloudbuild.yaml"
