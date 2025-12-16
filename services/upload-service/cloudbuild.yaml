@@ -3,7 +3,7 @@ steps:
     dir: "services/upload-service"
     args: ["build", "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service", "."]
 
-  - name: gcr.io/cloud-builders/docker"
+  - name: gcr.io/cloud-builders/docker
     args: ["push", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service"]
 
 images:

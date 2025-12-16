@@ -66,7 +66,7 @@ module "upload_service_trigger" {
   source = "./modules/cloudbuild"
   image = "us-central1-docker.pkg.dev/${var.project_id}/repo/upload-service"
   project_id = var.project_id
-  branch = var.branch
+  branch = ".*"
   repo_owner = var.repo_owner
   repo_name = var.repo_name  
   service_name = "upload-service"

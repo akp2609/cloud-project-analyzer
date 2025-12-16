@@ -12,4 +12,5 @@ resource "google_cloudbuild_trigger" "trigger" {
   }
    filename = "services/${var.service_name}/cloudbuild.yaml"
 
+   build { logging = "CLOUD_LOGGING_ONLY" }
 }
