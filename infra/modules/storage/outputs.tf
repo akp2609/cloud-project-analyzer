@@ -5,3 +5,7 @@ output "cost_data_bucket" {
 output "processed_data_bucket" {
   value = google_storage_bucket.processed_data_bucket.name
 }
+
+output "cloudbuild_logs" {
+  value = google_storage_bucket.cloudbuild_logs.name
+}

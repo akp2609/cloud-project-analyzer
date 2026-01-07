@@ -46,7 +46,7 @@ module "repo" {
   project_id = var.project_id
   region = var.region
   repository_id = "repo"
-  }
+}
 
 module "upload_service" {
   source = "./modules/cloudrun"
@@ -66,9 +66,12 @@ module "upload_service_trigger" {
   source = "./modules/cloudbuild"
   image = "us-central1-docker.pkg.dev/${var.project_id}/repo/upload-service"
   project_id = var.project_id
-  branch = ".*"
+  branch = "^.*$"
   repo_owner = var.repo_owner
   repo_name = var.repo_name  
   service_name = "upload-service"
-  depends_on = [google_project_service.cloudbuild]
+  depends_on = [
+    google_project_service.cloudbuild
+  ]
+  service_account = module.iam.sre_sa_id
 }

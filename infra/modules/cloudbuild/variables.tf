@@ -27,3 +27,8 @@ variable "image" {
   type        = string
   description = "The full name of the container image to build and push."
 }
+
+variable "service_account" {
+  type = string
+  description = "The service account email for the trigger"
+}
