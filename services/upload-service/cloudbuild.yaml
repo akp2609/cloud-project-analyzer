@@ -2,9 +2,11 @@ steps:
   - name: gcr.io/cloud-builders/docker
     dir: "services/upload-service"
     args: ["build", "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service", "."]
+    options: CLOUD_LOGGING_ONLY
 
   - name: gcr.io/cloud-builders/docker
     args: ["push", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service"]
+    options: CLOUD_LOGGING_ONLY
 
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service"
