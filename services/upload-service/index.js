@@ -26,7 +26,12 @@ if(!RAW_BUCKET){
     console.log("FATAL: RAW_BUCKET is not set. Set RAW_BUCKET env var and retry");
 }
 
-app.get("/healthz", (_req,res)=> res.status(200).send("OK"));
+app.get("/livez", (_req, res) => res.status(200).send("OK")); 
+app.get("/readyz", (_req, res) => {
+     // Add dependency checks here if needed 
+     res.status(200).send("OK"); 
+});
+
 app.get("/metrics", metricsHandler);
 
 app.post("/upload",uploadFile);
