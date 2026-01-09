@@ -31,12 +31,11 @@ app.get("/metrics", metricsHandler);
 
 app.post("/upload",uploadFile);
 
-if(process.env.NODE_ENV !== "production"){
-    app.listen(port, ()=>{
+app.listen(port, ()=>{
         console.log(`Upload service listening on port ${port}`);
         console.log(`RAW_BUCKET: ${RAW_BUCKET} CSV_TOPIC: ${CSV_TOPIC || "(not set"}`);
-    });
-}
+});
+
 
 export default app;
 
