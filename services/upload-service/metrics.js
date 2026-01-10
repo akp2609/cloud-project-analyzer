@@ -31,9 +31,16 @@ const metricsMiddleware = (req,res,next)=>{
     return next();
 }
 
-const metricsHandler = (_req,res)=>{
-    res.set("Content-Type",client.register.contentType);
-    res.end(client.register.metrics());
-}
+const metricsHandler = async (_req, res) => {
+  try {
+    res.set("Content-Type", client.register.contentType);
+    const metrics = await client.register.metrics();  
+    res.end(metrics);
+  } catch (err) {
+    console.error("metrics error", err);
+    res.status(500).send("Error generating metrics");
+  }
+};
+
 
 export {requestDuration,requestCount,metricsHandler,metricsMiddleware};
