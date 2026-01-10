@@ -1,14 +1,35 @@
 steps:
+  # Build the image with commit SHA tag
   - name: gcr.io/cloud-builders/docker
     dir: "services/upload-service"
-    args: ["build", "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service", "."]
-   
+    args: [
+      "build",
+      "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service:$COMMIT_SHA",
+      "."
+    ]
+
+  # Push the image
   - name: gcr.io/cloud-builders/docker
-    args: ["push", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service"]
-    
+    args: [
+      "push",
+      "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service:$COMMIT_SHA"
+    ]
+
+  # Run Terraform to deploy Cloud Run with the new image
+  - name: hashicorp/terraform
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        terraform init
+        terraform apply -auto-approve \
+          -var="image=us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service:$COMMIT_SHA" \
+          -var="service_name=upload-service" \
+          -var="region=us-central1" \
+          -var="project_id=$PROJECT_ID"
 
 images:
-  - "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service"
+  - "us-central1-docker.pkg.dev/$PROJECT_ID/repo/upload-service:$COMMIT_SHA"
 
-options: 
+options:
   logging: CLOUD_LOGGING_ONLY
