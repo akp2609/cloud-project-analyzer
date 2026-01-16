@@ -75,3 +75,9 @@ module "upload_service_trigger" {
   ]
   service_account = module.iam.sre_sa_id
 }
+
+module "bigquery" {
+  source = "./modules/bigquery"
+  project_id = var.project_id
+  region = var.region
+}

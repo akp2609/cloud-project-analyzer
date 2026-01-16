@@ -4,4 +4,9 @@ resource "google_artifact_registry_repository" "repo" {
   repository_id = "${var.repository_id}"
   description   = "Docker repo for microservices"
   format        = "DOCKER"
+
+
+  lifecycle {
+    ignore_changes = [cleanup_policies]
+  }
 }
