@@ -27,8 +27,7 @@ if(!RAW_BUCKET){
 }
 
 app.get("/livez", (_req, res) => res.status(200).send("OK")); 
-app.get("/readyz", (_req, res) => {
-     // Add dependency checks here if needed 
+app.get("/readyz", (_req, res) => { 
      res.status(200).send("OK"); 
 });
 

@@ -1,0 +1,2 @@
+variable "servicenetworking_dep" {
+}

@@ -28,3 +28,35 @@ resource "google_project_iam_member" "artifact_registry_writer" {
   member = "serviceAccount:${google_service_account.sre_cost_sa.email}"
 }
 
+resource "google_project_iam_member" "monitoring"{
+  project = var.dest_project_id
+  role = "roles/monitoring.viewer"
+  member = "serviceAccount:${google_service_account.sre_cost_sa.email}"
+}
+
+resource "google_project_iam_member" "sql_client"{
+  project = var.project_id
+  role = "roles/cloudsql.client"
+  member = "serviceAccount:${google_service_account.sre_cost_sa.email}"
+}
+
+resource "google_project_iam_member" "pubsub_subscriber" {
+  project = var.dest_project_id
+  role = "roles/pubsub.subscriber"
+  member = "serviceAccount:${google_service_account.sre_cost_sa.email}"
+}
+
+resource "google_pubsub_topic_iam_member" "logs_writer" {
+  topic = var.project_logs_topic
+  role = "roles/pubsub.publisher"
+  member = "serviceAccount:cloud-logs@system.gserviceaccount.com"
+}
+
+
+resource "google_pubsub_topic_iam_member" "sink_publisher" {
+  project = var.dest_project_id
+  topic   = var.topic_name
+  role    = "roles/pubsub.publisher"
+  member  = "${var.project_log_sink_writer_identity}"
+  depends_on = [var.project_log_sink_writer_identity]
+}

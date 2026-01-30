@@ -20,6 +20,19 @@ const uploadFile = async (req, res) => {
             return res.status(400).json({error: "No file uploaded"});
         }
 
+        const meta = {
+          platform_project_id: req.headers["x-platform-project-id"],
+          hook_id: req.headers["x-hook-id"],
+          external_project_id: req.headers["x-external-project-id"],
+          cloud: "gcp",
+          signal_type: req.headers["x-signal-type"] || "COST",
+          timestamp: new Date().toISOString()
+        };
+
+        if (!meta.platform_project_id || !meta.hook_id || !meta.external_project_id) {
+          return res.status(400).json({ error: "Missing project hook headers" });
+        }
+
         console.log("Bucket name", RAW_BUCKET);
         console.log("CSV_TOPIC:", process.env.CSV_TOPIC);
         console.log("Using credentials:", process.env.GOOGLE_APPLICATION_CREDENTIALS);
@@ -41,7 +54,7 @@ const uploadFile = async (req, res) => {
         let messageId = null;
         if(CSV_TOPIC){
             const topic = pubsub.topic(CSV_TOPIC);
-            const msg = {bucket: RAW_BUCKET, path: gcsPath, tenant, uploadAt: timestamp};
+            const msg = {bucket: RAW_BUCKET, path: gcsPath, tenant, meta , uploadAt: timestamp};
             messageId = await topic.publishJSON(msg);
         }
 

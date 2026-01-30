@@ -1,26 +1,7 @@
 
-resource "google_project_service" "iam_api" {
-  project = var.project_id
-  service = "iam.googleapis.com"
-  disable_on_destroy = false
-}
-
-resource "google_project_service" "pubsub" {
-  project = var.project_id
-  service = "pubsub.googleapis.com"
-  disable_on_destroy = false
-}
-
-resource "google_project_service" "cloudbuild" {
-  project             = var.project_id
-  service             = "cloudbuild.googleapis.com"
-  disable_on_destroy  = false
-}
-
-resource "google_project_service" "cloudrun" {
-  project             = var.project_id
-  service             = "run.googleapis.com"
-  disable_on_destroy  = false
+module "project_services" {
+  source     = "./modules/services"
+  project_id = var.project_id
 }
 
 
@@ -39,6 +20,11 @@ module "iam" {
   region = var.region
   raw_bucket_name = module.storage.cost_data_bucket
   processed_bucket_name = module.storage.processed_data_bucket
+  project_logs_topic = module.pubsub.project_logs
+  dest_project_id   = var.project_id
+  topic_name        = "project-logs"
+  log_filter = "severity>=ERROR"
+  project_log_sink_writer_identity = module.hirebizz_log_sink.project_log_sink_writer_identity
 }
 
 module "repo" {
@@ -59,7 +45,7 @@ module "upload_service" {
     PROCESSED_BUCKET = module.storage.processed_data_bucket
   }
   service_account = module.iam.sre_sa_email
-  depends_on = [google_project_service.cloudrun]
+  depends_on = [module.project_services.cloudrun_service]
 }
 
 module "upload_service_trigger" {
@@ -71,13 +57,42 @@ module "upload_service_trigger" {
   repo_name = var.repo_name  
   service_name = "upload-service"
   depends_on = [
-    google_project_service.cloudbuild
+    module.project_services.cloudbuild_service
   ]
   service_account = module.iam.sre_sa_id
 }
+
+module "pubsub" {
+  source = "./modules/pubsub"
+  project_id = var.project_id
+}
+
 
 module "bigquery" {
   source = "./modules/bigquery"
   project_id = var.project_id
   region = var.region
+}
+
+module "sql" {
+  source = "./modules/sql"
+  region = var.region
+  db_password = var.db_password
+  depends_on = [module.project_services.sqladmin_service]
+}
+
+module "network" {
+  source = "./modules/network"
+  servicenetworking_dep = module.project_services.servicenetworking_service
+  depends_on = [module.project_services.compute_service]
+}
+
+module "hirebizz_log_sink" {
+  source = "./modules/log-sinks"
+
+  source_project_id = "job-tracker-app-458110"
+  dest_project_id   = var.project_id
+  topic_name        = "projects-logs"
+
+  log_filter = "severity>=ERROR"
 }

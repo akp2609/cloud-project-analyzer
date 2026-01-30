@@ -26,3 +26,8 @@ variable "service_name" {
   type        = string
   description = "The name of the service."
 }
+
+variable "db_password"{
+  type = string
+  description = "The name of the practice"
+}
