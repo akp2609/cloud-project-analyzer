@@ -49,6 +49,54 @@ func (r *Repository) GetDailyCosts(
     return records, nil
 }
 
+type DashboardSummary struct {
+	ProjectID            string  `json:"project_id"`
+	TotalCost30d         float64 `json:"total_cost_30d"`
+	ActiveAnomalies      int     `json:"active_anomalies"`
+	HighSeverityInsights int     `json:"high_severity_insights"`
+}
+
+func (r *Repository) GetDashboardSummary(
+	ctx context.Context,
+	projectID string,
+) (*DashboardSummary, error) {
+
+	var summary DashboardSummary
+	summary.ProjectID = projectID
+
+	err := r.db.QueryRowContext(ctx, `
+		SELECT COALESCE(SUM(cost), 0)
+		FROM cost_daily
+		WHERE project_id = $1
+		AND usage_date >= CURRENT_DATE - INTERVAL '30 days'
+	`, projectID).Scan(&summary.TotalCost30d)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.QueryRowContext(ctx, `
+		SELECT COUNT(*)
+		FROM cost_anomalies
+		WHERE project_id = $1
+	`, projectID).Scan(&summary.ActiveAnomalies)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.db.QueryRowContext(ctx, `
+		SELECT COUNT(*)
+		FROM project_insights
+		WHERE project_id = $1
+		AND severity = 'HIGH'
+	`, projectID).Scan(&summary.HighSeverityInsights)
+	if err != nil {
+		return nil, err
+	}
+
+	return &summary, nil
+}
+
+
 func (r *Repository) InsertCostAnomaly(ctx context.Context, a models.CostAnomaly) error {
     query := `
         INSERT INTO cost_anomalies (
@@ -97,7 +145,7 @@ func (r *Repository) GetCostAnomaliesByProject(
 		spike_ratio,
 		severity,
 		created_at
-	FROM cost_anomalis
+	FROM cost_anomalies
 	WHERE project_id = $1
 	ORDER BY date DESC
 	`

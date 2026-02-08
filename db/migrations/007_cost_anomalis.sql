@@ -1,4 +1,4 @@
-CREATE TABLE cost_anomalis (
+CREATE TABLE cost_anomalies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     project_id TEXT NOT NULL,

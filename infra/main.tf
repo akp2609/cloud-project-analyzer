@@ -96,3 +96,47 @@ module "hirebizz_log_sink" {
 
   log_filter = "severity>=ERROR"
 }
+
+module "analysis_engine_service" {
+  source = "./modules/cloudrun"
+
+  project_id   = var.project_id
+  region       = var.region
+  service_name = "analysis-engine"
+  image        = "us-central1-docker.pkg.dev/${var.project_id}/repo/analysis-engine:latest"
+
+  env_vars = {
+    DATABASE_URL       = "postgres://analyzer:temporary-password-123@/analyzer?host=/cloudsql/${var.cloudsql_instance_connection_name}&sslmode=disable"
+    GCP_PROJECT_ID     = var.project_id
+    BQ_DATASET         = var.bq_dataset
+    BQ_TABLE           = var.bq_table
+    TARGET_PROJECT_ID  = "" # optional
+    CLOUDSQL_INSTANCE  = var.cloudsql_instance_connection_name
+  }
+
+  service_account = module.iam.analysis_engine_email
+  depends_on = [
+    module.project_services.cloudrun_service,
+    module.sql
+  ]
+
+}
+
+
+module "analysis_engine_trigger" {
+  source = "./modules/cloudbuild"
+
+  project_id   = var.project_id
+  service_name = "analysis-engine"
+  image        = "us-central1-docker.pkg.dev/${var.project_id}/repo/analysis-engine"
+
+  repo_owner = var.repo_owner
+  repo_name  = var.repo_name
+  branch     = "^main$"
+
+  service_account = module.iam.analysis_engine_id
+
+  depends_on = [
+    module.project_services.cloudbuild_service
+  ]
+}

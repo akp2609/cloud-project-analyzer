@@ -31,3 +31,23 @@ variable "db_password"{
   type = string
   description = "The name of the practice"
 }
+
+variable "bq_dataset" {
+  description = "BigQuery dataset containing processed cost data"
+  type        = string
+}
+
+variable "bq_table" {
+  description = "BigQuery table containing processed cost data"
+  type        = string
+}
+
+variable "target_project_id" {
+  type = string
+}
+
+variable "cloudsql_instance_connection_name" {
+  description = "Cloud SQL instance connection name for Analysis Engine"
+  type        = string
+}
+

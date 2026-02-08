@@ -3,6 +3,11 @@ resource "google_service_account" "sre_cost_sa" {
   display_name = "SRE Cost Service Account"
 }
 
+resource "google_service_account" "analysis_engine_sa" {
+  account_id = "analysis-engine-sa"
+  display_name = "Analysis Engine Service Account"
+}
+
 resource "google_storage_bucket_iam_member" "raw_bucket_binding" {
   bucket = var.raw_bucket_name
   role = "roles/storage.objectAdmin"
@@ -14,7 +19,6 @@ resource "google_storage_bucket_iam_member" "processed_bucket_binding" {
   role = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.sre_cost_sa.email}"
 }
-
 
 resource "google_project_iam_member" "raw_runtime_user" {
   project = var.project_id
@@ -52,11 +56,34 @@ resource "google_pubsub_topic_iam_member" "logs_writer" {
   member = "serviceAccount:cloud-logs@system.gserviceaccount.com"
 }
 
-
 resource "google_pubsub_topic_iam_member" "sink_publisher" {
   project = var.dest_project_id
   topic   = var.topic_name
   role    = "roles/pubsub.publisher"
   member  = "${var.project_log_sink_writer_identity}"
   depends_on = [var.project_log_sink_writer_identity]
+}
+
+resource "google_project_iam_member" "analysis_engine_sa" {
+  project = var.project_id
+  role = "roles/cloudsql.client"
+  member = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
+}
+
+resource "google_project_iam_member" "analysis_bq_viewer" {
+  project = var.project_id
+  role    = "roles/bigquery.dataViewer"
+  member  = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
+}
+
+resource "google_project_iam_member" "analysis_monitoring_viewer" {
+  project = var.project_id
+  role    = "roles/monitoring.viewer"
+  member  = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
+}
+
+resource "google_project_iam_member" "analysis_run_invoker" {
+  project = var.project_id
+  role    = "roles/run.invoker"
+  member  = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
 }

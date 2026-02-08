@@ -13,4 +13,3 @@ variable "image" {
 variable "service_name" {
   type = string
 }
-

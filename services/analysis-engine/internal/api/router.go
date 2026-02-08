@@ -29,6 +29,7 @@ func (h *Handler) GetProjectCostAnomalies(w http.ResponseWriter, r *http.Request
 
     records, err := h.repo.GetDailyCosts(ctx, projectID)
     if err != nil {
+        log.Println("dashboard query failed:", err)
         http.Error(w, "db error", http.StatusInternalServerError)
         return
     }
@@ -51,8 +52,32 @@ func (h *Handler) GetProjectCostAnomalies(w http.ResponseWriter, r *http.Request
     json.NewEncoder(w).Encode(anomalies)
 }
 
+
+func (h *Handler) GetDashboardSummary(w http.ResponseWriter, r *http.Request) {
+	projectID := r.URL.Query().Get("project_id")
+	if projectID == "" {
+		http.Error(w, "project_id required", http.StatusBadRequest)
+		return
+	}
+
+	ctx := context.Background()
+
+	summary, err := h.repo.GetDashboardSummary(ctx, projectID)
+	if err != nil {
+		log.Println("dashboard query failed:", err)
+		http.Error(w, "db error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(summary)
+}
+
 func (h *Handler) Routes() http.Handler {
-    mux := http.NewServeMux()
-    mux.HandleFunc("/projects/anomalies", h.GetProjectCostAnomalies)
-    return mux
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/dashboard", h.GetDashboardSummary)
+	mux.HandleFunc("/projects/anomalies", h.GetProjectCostAnomalies)
+
+	return mux
 }
