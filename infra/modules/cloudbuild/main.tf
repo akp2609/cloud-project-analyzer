@@ -14,4 +14,6 @@ resource "google_cloudbuild_trigger" "trigger" {
   }
 
   include_build_logs = "INCLUDE_BUILD_LOGS_WITH_STATUS"
+  included_files = var.included_files
+  
 }

@@ -60,6 +60,8 @@ module "upload_service_trigger" {
     module.project_services.cloudbuild_service
   ]
   service_account = module.iam.sre_sa_id
+
+  included_files = ["services/upload-service/**"]
 }
 
 module "pubsub" {
@@ -142,4 +144,5 @@ module "analysis_engine_trigger" {
   depends_on = [
     module.project_services.cloudbuild_service
   ]
+  included_files = ["services/analysis-engine/**"]
 }

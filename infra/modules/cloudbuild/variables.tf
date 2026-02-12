@@ -32,3 +32,9 @@ variable "service_account" {
   type = string
   description = "The service account email for the trigger"
 }
+
+variable "included_files" {
+  type    = list(string)
+  default = []
+}
+
