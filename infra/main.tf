@@ -103,16 +103,19 @@ module "analysis_engine_service" {
   project_id   = var.project_id
   region       = var.region
   service_name = "analysis-engine"
-  image        = "us-central1-docker.pkg.dev/${var.project_id}/repo/analysis-engine:latest"
+  image        = "us-central1-docker.pkg.dev/${var.project_id}/repo/analysis-engine"
 
   env_vars = {
-    DATABASE_URL       = "postgres://analyzer:temporary-password-123@/analyzer?host=/cloudsql/${var.cloudsql_instance_connection_name}&sslmode=disable"
+    DATABASE_URL       = "postgres://analyzer:${var.db_password}@/analyzer?host=/cloudsql/${var.cloudsql_instance_connection_name}&sslmode=disable"  
     GCP_PROJECT_ID     = var.project_id
     BQ_DATASET         = var.bq_dataset
     BQ_TABLE           = var.bq_table
-    TARGET_PROJECT_ID  = "" # optional
-    CLOUDSQL_INSTANCE  = var.cloudsql_instance_connection_name
+    TARGET_PROJECT_ID  = "job-tracker-app-458110" 
   }
+
+  cloud_sql_instances = [
+    var.cloudsql_instance_connection_name
+  ]
 
   service_account = module.iam.analysis_engine_email
   depends_on = [

@@ -87,3 +87,9 @@ resource "google_project_iam_member" "analysis_run_invoker" {
   role    = "roles/run.invoker"
   member  = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
 }
+
+resource "google_project_iam_member" "analysis_bq_user" {
+  project = var.project_id
+  role    = "roles/bigquery.user"
+  member  = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
+}

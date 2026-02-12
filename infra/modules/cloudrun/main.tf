@@ -14,11 +14,19 @@ resource "google_cloud_run_v2_service" "service" {
           value = env.value
         }
       }
-
     }
-  }
 
-  lifecycle {
-    ignore_changes = [template[0].containers[0].image]
+    service_account = var.service_account
+
+    
+    dynamic "volumes" {
+      for_each = var.cloud_sql_instances != null ? [1] : []
+      content {
+        name = "cloudsql"
+        cloud_sql_instance {
+          instances = var.cloud_sql_instances
+        }
+      }
+    }
   }
 }

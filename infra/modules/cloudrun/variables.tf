@@ -13,3 +13,8 @@ variable "image" {
 variable "service_name" {
   type = string
 }
+
+variable "cloud_sql_instances" {
+  type    = list(string)
+  default = null
+}

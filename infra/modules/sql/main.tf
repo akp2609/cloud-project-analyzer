@@ -20,6 +20,10 @@ resource "google_sql_database_instance" "control_plane" {
     }
   }
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   deletion_protection = false
 }
 
