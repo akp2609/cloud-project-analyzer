@@ -1,0 +1,36 @@
+steps:
+  # Build the image with commit SHA tag
+  - name: gcr.io/cloud-builders/docker
+    dir: "services/analysis-engine"
+    args: [
+      "build",
+      "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/analysis-engine:latest",
+      "."
+    ]
+
+  # Push the image
+  - name: gcr.io/cloud-builders/docker
+    args: [
+      "push",
+      "us-central1-docker.pkg.dev/$PROJECT_ID/repo/analysis-engine:latest"
+    ]
+
+  # Run Terraform to deploy Cloud Run with the new image
+  - name: hashicorp/terraform
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        cd infra
+        terraform init
+        terraform apply -auto-approve \
+          -var="image=us-central1-docker.pkg.dev/$PROJECT_ID/repo/analysis-engine:latest" \
+          -var="service_name=analysis-engine" \
+          -var="region=us-central1" \
+          -var="project_id=$PROJECT_ID"
+
+images:
+  - "us-central1-docker.pkg.dev/$PROJECT_ID/repo/analysis-engine:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

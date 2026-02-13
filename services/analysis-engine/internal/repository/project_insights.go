@@ -37,3 +37,35 @@ func (r *Repository) InsertProjectInsight(
 
 	return err
 }
+
+
+func (r *Repository) GetProjectInsights(ctx context.Context, projectID string) ([]models.ProjectInsight, error) {
+    rows, err := r.db.QueryContext(ctx, `
+        SELECT project_id, insight_type, severity, title, description, detected_at, metadeta
+        FROM project_insights
+        WHERE project_id = $1
+        ORDER BY detected_at DESC
+    `, projectID)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var insights []models.ProjectInsight
+    for rows.Next() {
+        var i models.ProjectInsight
+        if err := rows.Scan(
+            &i.ProjectID,
+            &i.InsightType,
+            &i.Severity,
+            &i.Title,
+            &i.Description,
+            &i.DetectedAt,
+            &i.Metadata,
+        ); err != nil {
+            return nil, err
+        }
+        insights = append(insights, i)
+    }
+    return insights, nil
+}

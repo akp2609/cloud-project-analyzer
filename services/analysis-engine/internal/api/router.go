@@ -73,11 +73,32 @@ func (h *Handler) GetDashboardSummary(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(summary)
 }
 
+func (h *Handler) GetProjectInsights(w http.ResponseWriter, r *http.Request) {
+    projectID := r.URL.Query().Get("project_id")
+    if projectID == "" {
+        http.Error(w, "project_id required", http.StatusBadRequest)
+        return
+    }
+
+    ctx := context.Background()
+    insights, err := h.repo.GetProjectInsights(ctx, projectID)
+    if err != nil {
+        log.Println("insights query failed:", err)
+        http.Error(w, "db error", http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(insights)
+}
+
+
 func (h *Handler) Routes() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/dashboard", h.GetDashboardSummary)
 	mux.HandleFunc("/projects/anomalies", h.GetProjectCostAnomalies)
+	mux.HandleFunc("/projects/insights", h.GetProjectInsights)
 
 	return mux
 }
