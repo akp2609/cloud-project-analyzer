@@ -7,7 +7,7 @@ import (
     "github.com/amanpandey1910/cloud-project-analyzer/analysis-engine/internal/models"
 )
 
-//Todo more insights later
+
 func BuildCostSpikeInsight(a models.CostAnomaly) models.ProjectInsight {
     
     metadataMap := map[string]any{
