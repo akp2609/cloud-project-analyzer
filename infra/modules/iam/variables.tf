@@ -44,3 +44,7 @@ variable "project_log_sink_writer_identity" {
 variable "state_bucket_name" {
   type = string
 }
+
+variable "secret_id" {
+  type = string
+}

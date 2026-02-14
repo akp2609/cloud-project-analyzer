@@ -25,6 +25,7 @@ module "iam" {
   state_bucket_name = var.state_bucket
   raw_bucket_name = module.storage.cost_data_bucket
   processed_bucket_name = module.storage.processed_data_bucket
+  secret_id = module.project_secrets.terraform_tfvars_secret_id
   project_logs_topic = module.pubsub.project_logs
   dest_project_id   = var.project_id
   topic_name        = "project-logs"

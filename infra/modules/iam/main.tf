@@ -112,3 +112,9 @@ resource "google_storage_bucket_iam_member" "tf_state_bucket_access" {
   member = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "terraform_tfvars_access" {
+  project   = var.project_id
+  secret_id = var.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
+}

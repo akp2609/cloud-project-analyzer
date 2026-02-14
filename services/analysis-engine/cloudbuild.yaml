@@ -25,7 +25,7 @@ steps:
           --secret=terraform-tfvars \
           --project=$PROJECT_ID > infra/terraform.tfvars
 
-  # Run Terraform
+  
   - name: hashicorp/terraform
     dir: infra
     entrypoint: "sh"
