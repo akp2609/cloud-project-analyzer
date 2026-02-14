@@ -1,5 +1,5 @@
 steps:
-  # Build the image with commit SHA tag
+  # Build the image
   - name: gcr.io/cloud-builders/docker
     dir: "services/analysis-engine"
     args: [
@@ -15,21 +15,28 @@ steps:
       "us-central1-docker.pkg.dev/$PROJECT_ID/repo/analysis-engine:latest"
     ]
 
-  # Run Terraform to deploy Cloud Run with the new image
+  # Fetch tfvars from Secret Manager
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud secrets versions access latest \
+          --secret=terraform-tfvars \
+          --project=$PROJECT_ID > infra/terraform.tfvars
+
+  # Run Terraform
   - name: hashicorp/terraform
     dir: infra
     entrypoint: "sh"
     args:
       - "-c"
       - |
-        cd infra
         terraform init
         terraform apply -auto-approve \
-          -var="state_bucket=cloud-cost-resource-analyzer-tf-state" \
+          -var-file=terraform.tfvars \
           -var="image=us-central1-docker.pkg.dev/$PROJECT_ID/repo/analysis-engine:latest" \
-          -var="service_name=analysis-engine" \
-          -var="region=us-central1" \
-          -var="project_id=$PROJECT_ID"
+          -var="service_name=analysis-engine"
 
 images:
   - "us-central1-docker.pkg.dev/$PROJECT_ID/repo/analysis-engine:latest"

@@ -4,6 +4,10 @@ module "project_services" {
   project_id = var.project_id
 }
 
+module "project_secrets" {
+  source = "./modules/secrets"
+  project_id = var.project_id
+}
 
 module "storage" {
   source = "./modules/storage"
