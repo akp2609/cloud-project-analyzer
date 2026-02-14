@@ -51,3 +51,8 @@ variable "cloudsql_instance_connection_name" {
   type        = string
 }
 
+variable "state_bucket" {
+  description = "Terraform state bucket name"
+  type        = string
+}
+

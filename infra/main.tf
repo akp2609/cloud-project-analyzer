@@ -18,6 +18,7 @@ module "iam" {
   prefix = "cca"
   project_id = var.project_id
   region = var.region
+  state_bucket_name = var.state_bucket
   raw_bucket_name = module.storage.cost_data_bucket
   processed_bucket_name = module.storage.processed_data_bucket
   project_logs_topic = module.pubsub.project_logs

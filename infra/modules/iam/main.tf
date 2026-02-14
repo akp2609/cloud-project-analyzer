@@ -97,11 +97,18 @@ resource "google_project_iam_member" "analysis_bq_user" {
 resource "google_project_iam_member" "analysis_engine_logs_writer" {
   project = var.project_id
   role    = "roles/logging.logWriter"
-  member  = "serviceAccount:analysis-engine-sa@${var.project_id}.iam.gserviceaccount.com"
+  member  = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
 }
 
 resource "google_project_iam_member" "analysis_engine_artifact_writer" {
   project = var.project_id
   role    = "roles/artifactregistry.writer"
-  member  = "serviceAccount:analysis-engine-sa@${var.project_id}.iam.gserviceaccount.com"
+  member  = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
 }
+
+resource "google_storage_bucket_iam_member" "tf_state_bucket_access" {
+  bucket =  var.state_bucket_name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
+}
+

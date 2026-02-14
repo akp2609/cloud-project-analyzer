@@ -40,3 +40,7 @@ variable "topic_name"{
 variable "project_log_sink_writer_identity" {
   type = string
 }
+
+variable "state_bucket_name" {
+  type = string
+}
