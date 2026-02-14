@@ -24,6 +24,7 @@ steps:
         cd infra
         terraform init
         terraform apply -auto-approve \
+          -var-file=terraform.tfvars \
           -var="image=us-central1-docker.pkg.dev/$PROJECT_ID/repo/analysis-engine:latest" \
           -var="service_name=analysis-engine" \
           -var="region=us-central1" \
