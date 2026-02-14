@@ -40,6 +40,10 @@ module "repo" {
   repository_id = "repo"
 }
 
+locals {
+  image = "us-central1-docker.pkg.dev/${var.project_id}/repo/${var.service_name}"
+}
+
 module "upload_service" {
   source = "./modules/cloudrun"
   project_id = var.project_id
@@ -111,7 +115,8 @@ module "analysis_engine_service" {
   project_id   = var.project_id
   region       = var.region
   service_name = "analysis-engine"
-  image        = "us-central1-docker.pkg.dev/${var.project_id}/repo/analysis-engine"
+  image        = locals.image
+
 
   env_vars = {
     DATABASE_URL       = "postgres://analyzer:${var.db_password}@/analyzer?host=/cloudsql/${var.cloudsql_instance_connection_name}&sslmode=disable"  

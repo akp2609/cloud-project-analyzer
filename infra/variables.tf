@@ -55,4 +55,3 @@ variable "state_bucket" {
   description = "Terraform state bucket name"
   type        = string
 }
-
