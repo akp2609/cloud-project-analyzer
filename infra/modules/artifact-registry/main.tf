@@ -6,7 +6,19 @@ resource "google_artifact_registry_repository" "repo" {
   format        = "DOCKER"
 
 
-  lifecycle {
-    ignore_changes = [cleanup_policies]
+   cleanup_policies {
+    id     = "delete-old-artifacts"
+    action = "DELETE"
+    condition {
+      tag_state = "ANY"
+    }
+  }
+
+  cleanup_policies {
+    id     = "keep-latest-5"
+    action = "KEEP"
+    most_recent_versions {
+      keep_count = 5
+    }
   }
 }

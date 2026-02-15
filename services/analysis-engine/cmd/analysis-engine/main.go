@@ -81,6 +81,7 @@ func main() {
     
     mux.Handle("/dashboard", handler.Routes())
     mux.Handle("/projects/anomalies", handler.Routes())
+    mux.Handle("/projects/insights", handler.Routes())
 
     
     mux.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
