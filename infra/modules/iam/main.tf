@@ -118,3 +118,9 @@ resource "google_secret_manager_secret_iam_member" "terraform_tfvars_access" {
   role      = "roles/secretmanager.secretAccessor"
   member = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
 }
+
+resource "google_project_iam_member" "analysis_engine_editor" {
+  project = var.project_id
+  role    = "roles/editor"
+  member  = "serviceAccount:${google_service_account.analysis_engine_sa.email}"
+}
