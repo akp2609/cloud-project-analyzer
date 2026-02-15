@@ -55,3 +55,9 @@ variable "state_bucket" {
   description = "Terraform state bucket name"
   type        = string
 }
+
+variable "image" {
+  description = "Container image to deploy to Cloud Run"
+  type        = string
+}
+
