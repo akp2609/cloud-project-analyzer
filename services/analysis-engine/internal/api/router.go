@@ -112,7 +112,7 @@ func (h *Handler) Routes() http.Handler {
 	mux.HandleFunc("/dashboard", h.GetDashboardSummary)
 	mux.HandleFunc("/projects/anomalies", h.GetProjectCostAnomalies)
 	mux.HandleFunc("/projects/insights", h.GetProjectInsights)
-    mux.HandleFunc("/projects", h.GetProjects)
+    mux.HandleFunc("/projects/all", h.GetProjects)
 
 	return mux
 }
