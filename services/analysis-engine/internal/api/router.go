@@ -5,6 +5,7 @@ import (
     "encoding/json"
     "net/http"
     "log"
+    "time"
 
     "github.com/amanpandey1910/cloud-project-analyzer/analysis-engine/internal/analysis"
     "github.com/amanpandey1910/cloud-project-analyzer/analysis-engine/internal/repository"
@@ -105,6 +106,26 @@ func (h *Handler) GetProjects(w http.ResponseWriter, r *http.Request){
     json.NewEncoder(w).Encode(projects)
 }
 
+func (h *Handler) GetMetricsInsights(w http.ResponseWriter, r *http.Request) {
+    ctx := r.Context()
+    projectID := r.URL.Query().Get("project_id")
+    metricType := r.URL.Query().Get("metric_type")
+
+    metrics, err := h.repo.GetMetrics(ctx, projectID, metricType, time.Now().Add(-30*24*time.Hour))
+    if err != nil {
+        http.Error(w, "db error", 500)
+        return
+    }
+
+    insight := analysis.CalculateInsights(ctx, metrics)
+    insight.ProjectID = projectID
+    insight.MetricType = metricType
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(insight)
+}
+
+
 
 func (h *Handler) Routes() *http.ServeMux {
     mux := http.NewServeMux()
@@ -112,6 +133,7 @@ func (h *Handler) Routes() *http.ServeMux {
     mux.HandleFunc("/projects/anomalies", h.GetProjectCostAnomalies)
     mux.HandleFunc("/projects/insights", h.GetProjectInsights)
     mux.HandleFunc("/projects/all", h.GetProjects)
+    mux.HandleFunc("/projects/metrics-insight",h.GetMetricsInsights)
     return mux
 }
 
