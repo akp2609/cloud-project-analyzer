@@ -76,13 +76,7 @@ func main() {
     repo := repository.NewRepository(db)
     handler := api.NewHandler(repo)
 
-    mux := http.NewServeMux()
-
-    
-    mux.Handle("/dashboard", handler.Routes())
-    mux.Handle("/projects/anomalies", handler.Routes())
-    mux.Handle("/projects/insights", handler.Routes())
-    mux.Handle("/projects",handler.Routes())
+    mux := handler.Routes().(*http.ServeMux)
 
     
     mux.HandleFunc("/sync", func(w http.ResponseWriter, r *http.Request) {
