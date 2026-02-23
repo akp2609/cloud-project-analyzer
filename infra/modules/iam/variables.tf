@@ -48,3 +48,16 @@ variable "state_bucket_name" {
 variable "secret_id" {
   type = string
 }
+
+variable "extra_services" {
+  description = "Additional service accounts to create dynamically"
+  type = map(object({
+    roles = list(string)
+  }))
+  default = {}
+}
+
+variable "external_projects" {
+  type = list(string)
+  default = []
+}

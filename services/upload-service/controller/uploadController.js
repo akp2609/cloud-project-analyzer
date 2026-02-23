@@ -1,10 +1,7 @@
 import {Storage} from "@google-cloud/storage";
 import {PubSub} from "@google-cloud/pubsub";
 
-const storage = new Storage({
-  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-  projectId: "cloud-cost-resource-analyzer"
-});
+const storage = new Storage();
 const pubsub = new PubSub({
   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS,
   projectId: "cloud-cost-resource-analyzer"

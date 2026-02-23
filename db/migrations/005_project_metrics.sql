@@ -10,6 +10,7 @@ CREATE TABLE project_metrics (
     value DOUBLE PRECISION NOT NULL,
 
     created_at TIMESTAMP DEFAULT now(),
+    collected_at TIMESTAMP DEFAULT now(),
 
     PRIMARY KEY (
         project_id,
