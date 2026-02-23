@@ -106,13 +106,12 @@ func (h *Handler) GetProjects(w http.ResponseWriter, r *http.Request){
 }
 
 
-func (h *Handler) Routes() http.Handler {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/dashboard", h.GetDashboardSummary)
-	mux.HandleFunc("/projects/anomalies", h.GetProjectCostAnomalies)
-	mux.HandleFunc("/projects/insights", h.GetProjectInsights)
+func (h *Handler) Routes() *http.ServeMux {
+    mux := http.NewServeMux()
+    mux.HandleFunc("/dashboard", h.GetDashboardSummary)
+    mux.HandleFunc("/projects/anomalies", h.GetProjectCostAnomalies)
+    mux.HandleFunc("/projects/insights", h.GetProjectInsights)
     mux.HandleFunc("/projects/all", h.GetProjects)
-
-	return mux
+    return mux
 }
+
