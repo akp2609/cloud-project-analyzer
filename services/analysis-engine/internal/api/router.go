@@ -92,6 +92,19 @@ func (h *Handler) GetProjectInsights(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(insights)
 }
 
+func (h *Handler) GetProjects(w http.ResponseWriter, r *http.Request){
+    ctx := context.Background()
+    projects, err := h.repo.GetAllProjects(ctx)
+    if err != nil {
+        log.Println("projects query failed",err)
+        http.Error(w, "db error", http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json") 
+    json.NewEncoder(w).Encode(projects)
+}
+
 
 func (h *Handler) Routes() http.Handler {
 	mux := http.NewServeMux()
@@ -99,6 +112,7 @@ func (h *Handler) Routes() http.Handler {
 	mux.HandleFunc("/dashboard", h.GetDashboardSummary)
 	mux.HandleFunc("/projects/anomalies", h.GetProjectCostAnomalies)
 	mux.HandleFunc("/projects/insights", h.GetProjectInsights)
+    mux.HandleFunc("/projects", h.GetProjects)
 
 	return mux
 }
