@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+/* custom variant */
+@custom-variant dark (&:is(.dark *));
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* dashboard polish */
+.dashboard-card {
+  background: linear-gradient(to bottom, rgba(0, 217, 255, 0.03) 0%, transparent 100%), #0f1420;
+  border: 1px solid #1a2332;
+  border-radius: 12px;
+}
+
+.dashboard-hover {
+  transition: all 300ms ease;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --radius: 12px;
+  }
+
+  .dark {
+    --background: 222 50% 7%;
+    --foreground: 210 40% 96%;
+    --card: 224 40% 10%;
+    --card-foreground: 210 40% 96%;
+    --border: 222 30% 18%;
+    --muted: 222 30% 18%;
+    --muted-foreground: 215 20% 65%;
+    --primary: 194 100% 50%;
+    --primary-foreground: 222 50% 7%;
+  }
+}

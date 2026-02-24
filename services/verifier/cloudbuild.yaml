@@ -1,0 +1,43 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    dir: "services/verifier"
+    args:
+      [
+        "build",
+        "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/repo/verifier:latest",
+        "."
+      ]
+
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        "push",
+        "us-central1-docker.pkg.dev/$PROJECT_ID/repo/verifier:latest"
+      ]
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        gcloud secrets versions access latest \
+          --secret=terraform-tfvars \
+          --project=$PROJECT_ID > infra/terraform.tfvars
+
+  - name: hashicorp/terraform
+    dir: infra
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        terraform init
+        terraform apply -auto-approve \
+          -var-file=terraform.tfvars \
+          -var="image=us-central1-docker.pkg.dev/$PROJECT_ID/repo/verifier:latest" \
+          -var="service_name=verifier"
+
+images:
+  - "us-central1-docker.pkg.dev/$PROJECT_ID/repo/verifier:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -48,6 +48,15 @@ func (h *Handler) GetProjectCostAnomalies(w http.ResponseWriter, r *http.Request
 	_ = h.repo.InsertProjectInsight(ctx, insight)
     }
 
+    anomalies, err := h.repo.GetCostAnomaliesByProject(ctx, projectID)
+    if err != nil {
+       log.Println("anomalies query failed:", err)
+       http.Error(w, "db error", http.StatusInternalServerError)
+       return
+    }
+    json.NewEncoder(w).Encode(anomalies)
+
+
 
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(anomalies)

@@ -85,6 +85,7 @@ module "upload_service" {
   env_vars = {
     RAW_BUCKET = module.storage.cost_data_bucket
     PROCESSED_BUCKET = module.storage.processed_data_bucket
+    GOOGLE_APPLICATION_CREDENTIALS = ""
   }
   service_account = module.iam.sre_sa_email
   depends_on = [module.project_services.cloudrun_service]

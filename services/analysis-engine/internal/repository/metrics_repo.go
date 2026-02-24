@@ -8,8 +8,6 @@ import (
     "github.com/amanpandey1910/cloud-project-analyzer/analysis-engine/internal/models"
 )
 
-
-
 func (r *Repository) GetMetrics(ctx context.Context, projectID, metricType string, since time.Time) ([]models.ProjectMetric, error) {
     var rows *sql.Rows
     var err error
