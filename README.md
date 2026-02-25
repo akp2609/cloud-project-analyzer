@@ -10,6 +10,14 @@ Built with a **microservice architecture** on Google Cloud Run, the system demon
 
 Managing cloud costs across multiple GCP projects becomes increasingly complex as infrastructure scales. Native dashboards often lack centralized visibility, anomaly detection, and project-level insights.
 
+## 📷 Dashboard Preview
+
+```markdown
+![Dashboard](screenshots/ccra.png)
+```
+
+---
+
 **This project provides:**
 
 - Multi-project onboarding  
@@ -161,3 +169,154 @@ Authenticate with GCP:
 ```bash
 gcloud auth login
 gcloud config set project <YOUR_GCP_PROJECT_ID>
+
+---
+
+## 🔌 Enable Required APIs
+
+```bash
+gcloud services enable \
+  run.googleapis.com \
+  pubsub.googleapis.com \
+  artifactregistry.googleapis.com \
+  sqladmin.googleapis.com
+```
+
+---
+
+## 🔑 Required IAM Roles
+
+The deploying account must have the following roles:
+
+- Cloud Run Admin  
+- Pub/Sub Admin  
+- Cloud SQL Admin  
+- Service Account User  
+- Artifact Registry Admin  
+- Project IAM Admin  
+
+### One-Click Role Grant (Development Only)
+
+> ⚠️ This grants Owner access. Use only for development environments.
+
+```bash
+gcloud projects add-iam-policy-binding <YOUR_GCP_PROJECT_ID> \
+  --member="user:YOUR_EMAIL" \
+  --role="roles/owner"
+```
+
+---
+
+## 🌍 Infrastructure Deployment (Terraform)
+
+Navigate to infrastructure directory:
+
+```bash
+cd cloud-cost-resource-analyzer/infra
+```
+
+Initialize Terraform:
+
+```bash
+terraform init
+```
+
+Preview infrastructure changes:
+
+```bash
+terraform plan
+```
+
+Apply infrastructure:
+
+```bash
+terraform apply
+```
+
+This provisions:
+
+- Cloud Run services  
+- Pub/Sub topics & subscriptions  
+- PostgreSQL instance  
+- Required IAM bindings  
+
+---
+
+## 🐳 Service Deployment (If Not Automated)
+
+Build container image:
+
+```bash
+gcloud builds submit --tag gcr.io/<PROJECT_ID>/upload-service
+```
+
+Deploy to Cloud Run:
+
+```bash
+gcloud run deploy upload-service \
+  --image gcr.io/<PROJECT_ID>/upload-service \
+  --region us-central1
+```
+
+Repeat for:
+
+- `cost-processor`  
+- `metrics-ingestor`  
+- `analysis-engine`  
+
+---
+
+## 🖥 Running Frontend Locally
+
+Navigate to frontend:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Ensure the frontend API base URL points to the deployed **Analysis Engine** service.
+
+---
+
+## 📡 Accessing Services
+
+List deployed services:
+
+```bash
+gcloud run services list --region us-central1
+```
+
+Test Analysis Engine endpoint:
+
+```bash
+curl https://<ANALYSIS_ENGINE_URL>/dashboard
+```
+
+---
+
+## 🧹 Cleanup (Avoid Ongoing Charges)
+
+```bash
+cd infra
+terraform destroy
+```
+
+---
+
+## 👨‍💻 Author
+
+**Aman Pandey**
+
+Backend-focused engineer with strong interest in cloud-native systems, distributed architecture, and event-driven backend design.
