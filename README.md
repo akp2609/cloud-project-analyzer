@@ -12,7 +12,7 @@ Managing cloud costs across multiple GCP projects becomes increasingly complex a
 
 ## 📷 Dashboard Preview
 
-![Dashboard](screenshot/ccra.png)
+![Dashboard](frontend/screenshot/ccra.png)
 
 ---
 
