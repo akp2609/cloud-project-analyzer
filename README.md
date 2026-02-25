@@ -31,7 +31,7 @@ Managing cloud costs across multiple GCP projects becomes increasingly complex a
 
 The system follows a **microservice + event-driven architecture** deployed on Google Cloud.
 
-> 📌 Insert architecture diagram image below this section.
+![Architecture](frontend/screenshot/architecture_flow.png)
 
 ### Core Flow
 
